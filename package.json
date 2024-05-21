@@ -28,7 +28,6 @@
     "expo-device": "~6.0.2",
     "expo-image-picker": "~15.0.5",
     "expo-notifications": "~0.28.3",
-    "expo-permissions": "^14.4.0",
     "expo-status-bar": "~1.12.1",
     "expo-video": "^1.1.9",
     "firebase": "^10.11.0",
@@ -65,6 +64,11 @@
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "@babel/plugin-transform-template-literals": "^7.24.1"
+  },
+  "resolutions": {
+    "@expo/config-plugins": "~6.0.0",
+    "@expo/prebuild-config": "~6.0.0",
+    "expo-modules-autolinking": "~1.1.0"
   },
   "private": true
 }

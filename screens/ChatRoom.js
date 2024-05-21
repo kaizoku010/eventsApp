@@ -3,7 +3,6 @@ import { View, Text, TextInput, Button, ScrollView, StyleSheet, ImageBackground,
 import { doc, onSnapshot, updateDoc, db } from '../Operations/firebaseConfig'; // Import Firebase Firestore functions
 import moment from 'moment'; // Import moment.js for date formatting
 import * as Notifications from 'expo-notifications';
-import * as Permissions from 'expo-permissions';
 import ic_placeHolder  from "../assets/receiver_profile_2.png"
 
 // Simple SVG image component

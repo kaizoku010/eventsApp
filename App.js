@@ -19,8 +19,6 @@ const Stack = createStackNavigator();
 
 
 export default function App() {
-  // PermissionsAndroid is not needed for push notifications in Expo
-  // PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS);
 
   return (
     <EventsDataProvider>

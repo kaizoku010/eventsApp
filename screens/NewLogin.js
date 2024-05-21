@@ -38,8 +38,7 @@ const NewLogin = () => {
     <View style={loginStyle.loginHolder}>
       <ImageBackground
         // source={require("../assets/lower.png")}
-        style={loginStyle.imagebg}
-      >
+        style={loginStyle.imagebg}>
         <Video
           source={require("../assets/intro.mp4")} // Your video file
           style={loginStyle.videoBg}

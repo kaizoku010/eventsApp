@@ -61,8 +61,9 @@ const NewLogin = () => {
           <TouchableOpacity
             style={loginStyle.loginBtn}
             onPress={handleLoginPress}
-          >
-            <Text style={loginStyle.loginBtnText}>Login</Text>
+          > 
+
+          <Text style={loginStyle.loginBtnText}>Login</Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={loginStyle.loginBtn2}

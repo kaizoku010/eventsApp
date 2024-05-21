@@ -1,75 +1,77 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, StyleSheet, Image, Dimensions, ImageBackground, style } from 'react-native';
-import Carousel, { Pagination } from 'react-native-snap-carousel';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, StyleSheet, Image, Dimensions, ScrollView, ImageBackground } from 'react-native';
 import moment from 'moment';
 import { DataContext } from "../stateManagment/ContextApi";
 
 const CustomImageCarousel = () => {
   const [activeSlide, setActiveSlide] = useState(0);
   const screenWidth = Dimensions.get('window').width;
-  const { attendees, events, isLoading, error } = useContext(DataContext);
+  const { events } = useContext(DataContext);
 
-  const renderItem = ({ item }) => {
+  const handleScroll = (event) => {
+    const slideIndex = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
+    setActiveSlide(slideIndex);
+  };
 
+  const renderItem = (item, index) => {
     const eventDate = moment(item.eventDate);
     const month = eventDate.format('MMM');
     const day = eventDate.date();
-  
-    return (
-      <View style={styles.slideHolder}>
-<View style={styles.slide}>
 
-        <View style={styles.imageContainer}>
-          <ImageBackground srcSet={item.eventGraphicsURL} style={styles.image}>
-            <View style={styles.eventDate}>
-            <Text style={styles.dateText}>{month}</Text>
-            <Text style={styles.dayText}>{day}</Text>
-            </View>
-          </ImageBackground>
+    return (
+      <View style={[styles.slideHolder, { width: screenWidth }]} key={index}>
+        <View style={styles.slide}>
+          <View style={styles.imageContainer}>
+            <ImageBackground source={{ uri: item.eventGraphicsURL }} style={styles.image}>
+              <View style={styles.eventDate}>
+                <Text style={styles.dateText}>{month}</Text>
+                <Text style={styles.dayText}>{day}</Text>
+              </View>
+            </ImageBackground>
+          </View>
+          <Text style={styles.title}>{item.eventName}</Text>
+          <Text style={styles.location}>{item.eventLocation}</Text>
         </View>
-        <Text style={styles.title}>{item.eventName}</Text>
-        <Text style={styles.location}>{item.eventLocation}</Text>
       </View>
-      </View>
-      
     );
   };
 
-  const pagination = (
-    <Pagination
-      containerStyle={styles.paginationContainer}
-    />
-  );
+  const renderPagination = () => {
+    return (
+      <View style={styles.paginationContainer}>
+        {events.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.paginationDot,
+              activeSlide === index ? styles.paginationDotActive : styles.paginationDotInactive
+            ]}
+          />
+        ))}
+      </View>
+    );
+  };
+
   return (
     <View style={styles.container}>
-      <Carousel
-        autoplay={true}
-        loop={true}
-        layout={'default'}
-        data={events}
-        renderItem={renderItem}
-        sliderWidth={screenWidth}
-        itemWidth={screenWidth * .93}
-        sliderHeight={200}
-        itemHeight={200}
-        inactiveSlideScale={1}
-        inactiveSlideOpacity={1}
-        onSnapToItem={(index) => setActiveSlide(index)}
-        activeSlideAlignment={'start'}
-      />
-      {pagination}
+      <ScrollView
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+      >
+        {events.map((item, index) => renderItem(item, index))}
+      </ScrollView>
+      {renderPagination()}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  slideHolder:{
-    // backgroundColor: 'blue',
+  slideHolder: {
     paddingHorizontal: 10,
-
   },
-
   container: {
     flex: 1,
     alignItems: 'center',
@@ -81,26 +83,17 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 200,
     backgroundColor: '#FFFAF0',
-    // borderRadius: 7,
     margin: 5,
-    padding:5
-    // paddingHorizontal: 10,
+    padding: 5,
   },
   imageContainer: {
-    // width: '120%',
     height: '70%',
     marginBottom: 10,
-    // borderRadius: 50,
   },
   image: {
     width: "100%",
     height: '100%',
-    borderRadius:20
-  },
-  mayday:{
-    marginTop:20,
-    fontWeight:"500",
-    fontSize:12
+    borderRadius: 20,
   },
   eventDate: {
     margin: 10,
@@ -117,7 +110,6 @@ const styles = StyleSheet.create({
     width: 40,
     fontWeight: 'bold',
     justifyContent: 'center',
-    // marginTop: 5,
   },
   dayText: {
     fontSize: 15,
@@ -132,14 +124,27 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     fontWeight: 'bold',
     fontSize: 12,
-    color:"#0C0404"
+    color: "#0C0404",
   },
   location: {
     textAlign: 'left',
     fontSize: 12,
   },
   paginationContainer: {
-    // Add your pagination container styles here
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  paginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 4,
+  },
+  paginationDotActive: {
+    backgroundColor: 'black',
+  },
+  paginationDotInactive: {
+    backgroundColor: 'gray',
   },
 });
 

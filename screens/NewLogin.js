@@ -1,104 +1,155 @@
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  ImageBackground,
-  Image,
-  StatusBar,
-  Linking,
-} from "react-native";
-import React from "react";
-import { loginStyle } from "./NewLoginStyles";
-import Logo from "../assets/logo_white.png";
-import { useNavigation } from "@react-navigation/native";
-// import { GoogleSignin } from '@react-native-google-signin/google-signin';
-// import Video from "react-native-video";
-import { Video } from "expo-av";
+import React, { useEffect, useState, useContext } from "react";
+import { View, Text, StyleSheet, Image, ScrollView, useWindowDimensions, ImageBackground } from 'react-native'; // Add useWindowDimensions import
+import moment from 'moment';
+import { DataContext } from "../stateManagment/ContextApi";
 
-import {} from "react-native-svg";
+const CustomImageCarousel = () => {
+  const [activeSlide, setActiveSlide] = useState(0);
+  const { width: screenWidth } = useWindowDimensions(); // Get screen width using useWindowDimensions
+  const { events } = useContext(DataContext);
 
-const NewLogin = () => {
-  const navigation = useNavigation();
-  // GoogleSignin.configure({
-  //   // webClientId: 'YOUR_WEB_CLIENT_ID', // Required for web projects
-  //   androidClientId: '346104076821-6mkqccr54e389oa6ct3cnp1hjk8v2ofp.apps.googleusercontent.com', // Required for Android apps
-  //   // iosClientId: 'YOUR_IOS_CLIENT_ID', // Required for iOS apps
-  // });
-
-  const handleLoginPress = () => {
-    navigation.navigate("Login"); // Navigate to the "Login" screen
+  const handleScroll = (event) => {
+    const slideIndex = Math.round(event.nativeEvent.contentOffset.x / screenWidth);
+    setActiveSlide(slideIndex);
   };
 
-  const handleSignUpPress = () => {
-    // Open a web page when the "Sign Up" button is pressed
-    Linking.openURL("https://selfcheckinapps.web.app/");
+  const renderItem = (item, index) => {
+    const eventDate = moment(item.eventDate);
+    const month = eventDate.format('MMM');
+    const day = eventDate.date();
+
+    return (
+      <View style={styles.slideHolder} key={index}>
+        <View style={styles.slide}>
+          <View style={styles.imageContainer}>
+            <ImageBackground source={{ uri: item.eventGraphicsURL }} style={styles.image}>
+              <View style={styles.eventDate}>
+                <Text style={styles.dateText}>{month}</Text>
+                <Text style={styles.dayText}>{day}</Text>
+              </View>
+            </ImageBackground>
+          </View>
+          <Text style={styles.title}>{item.eventName}</Text>
+          <Text style={styles.location}>{item.eventLocation}</Text>
+        </View>
+      </View>
+    );
+  };
+
+  const renderPagination = () => {
+    return (
+      <View style={styles.paginationContainer}>
+        {events.map((_, index) => (
+          <View
+            key={index}
+            style={[
+              styles.paginationDot,
+              activeSlide === index ? styles.paginationDotActive : styles.paginationDotInactive
+            ]}
+          />
+        ))}
+      </View>
+    );
   };
 
   return (
-    <View style={loginStyle.loginHolder}>
-      <ImageBackground
-        // source={require("../assets/lower.png")}
-        style={loginStyle.imagebg}>
-        <Video
-          source={require("../assets/intro.mp4")} // Your video file
-          style={loginStyle.videoBg}
-          // muted={true}
-          repeat={true}
-          resizeMode={"cover"}
-          rate={1.2}
-          ignoreSilentSwitch={"obey"}
-          volume={1.0}
-        />
-        <StatusBar translucent backgroundColor="transparent" />
-
-        <Image source={Logo} style={loginStyle.avatar2} />
-        {/* <Text style={loginStyle.overText}>Welcome </Text>
-<Text style={loginStyle.overText2}>To Moxie 5 Events.</Text>
-<Text style={loginStyle.overText3}>All events in one place.</Text> */}
-      </ImageBackground>
-      <View style={loginStyle.feildHolder}>
-        <View style={loginStyle.buttons}>
-          <TouchableOpacity
-            style={loginStyle.loginBtn}
-            onPress={handleLoginPress}
-          > 
-
-          <Text style={loginStyle.loginBtnText}>Login</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={loginStyle.loginBtn2}
-            onPress={handleSignUpPress} // Call handleSignUpPress function on button press
-          >
-            <Text style={loginStyle.loginBtnText2}>Sign Up</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={loginStyle.orContainer}>
-          <View style={loginStyle.line}></View>
-          <Text style={loginStyle.orText}>Or</Text>
-          <View style={loginStyle.line}></View>
-        </View>
-        <TouchableOpacity
-          style={loginStyle.googleBtn}
-          onPress={() => console.log("Google Button pressed!")}
-        >
-          <Text style={loginStyle.googleBtnText}>Sign in with Google</Text>
-        </TouchableOpacity>
-
-        {/* <TouchableOpacity
-          style={loginStyle.googleBtn2}
-          onPress={() => console.log('Google Button pressed!')}
-        >
-          <Text style={loginStyle.googleBtnText}>Contact Us</Text>
-        </TouchableOpacity> */}
-
-        <View style={loginStyle.footer}>
-          <Text style={loginStyle.footer_text}>@2024 (Beta)</Text>
-          <Text style={loginStyle.footer_text2}>Moxie5 Marketing Agency</Text>
-          {/* <Text style={loginStyle.footer_text3}>www.moxie5agency.com</Text> */}
-        </View>
-      </View>
+    <View style={styles.container}>
+      <ScrollView
+        horizontal
+        pagingEnabled
+        showsHorizontalScrollIndicator={false}
+        onScroll={handleScroll}
+        scrollEventThrottle={16}
+        contentContainerStyle={styles.contentContainer}
+      >
+        {events.map((item, index) => renderItem(item, index))}
+      </ScrollView>
+      {renderPagination()}
     </View>
   );
 };
 
-export default NewLogin;
+const styles = StyleSheet.create({
+  slideHolder: {
+    paddingHorizontal: 10,
+  },
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  slide: {
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    width: screenWidth * 0.9, // Adjusted width to fit screen with padding
+    height: 200,
+    backgroundColor: '#FFFAF0',
+    margin: 5,
+    padding: 5,
+  },
+  imageContainer: {
+    height: '70%',
+    marginBottom: 10,
+  },
+  image: {
+    width: "100%",
+    height: '100%',
+    borderRadius: 20,
+  },
+  eventDate: {
+    margin: 10,
+    width: 50,
+    backgroundColor: 'gray',
+    padding: 5,
+    borderRadius: 7,
+    display: 'flex',
+  },
+  dateText: {
+    fontSize: 12,
+    color: 'white',
+    textAlign: 'center',
+    width: 40,
+    fontWeight: 'bold',
+    justifyContent: 'center',
+  },
+  dayText: {
+    fontSize: 15,
+    color: 'white',
+    textAlign: 'center',
+    width: 40,
+    fontWeight: 'bold',
+    justifyContent: 'center',
+    marginTop: -5,
+  },
+  title: {
+    textAlign: 'left',
+    fontWeight: 'bold',
+    fontSize: 12,
+    color: "#0C0404",
+  },
+  location: {
+    textAlign: 'left',
+    fontSize: 12,
+  },
+  paginationContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  paginationDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    marginHorizontal: 4,
+  },
+  paginationDotActive: {
+    backgroundColor: 'black',
+  },
+  paginationDotInactive: {
+    backgroundColor: 'gray',
+  },
+  contentContainer: {
+    paddingRight: screenWidth * 0.1, // Padding for the next slide to be partially visible
+  },
+});
+
+export default CustomImageCarousel;

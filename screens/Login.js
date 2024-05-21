@@ -59,8 +59,8 @@ const Login = ({ navigation }) => {
 
       navigation.navigate('HomeTabs', { user: userData });
     } catch (error) {
-      //console.error('Login Error:', error);
-      alert("Please make sure you have an internet connection")
+      console.error('Login Error:', error);
+      // alert("Please make sure you have an internet connection")
     } finally {
       setIsLoading(false); // Reset loading state after login attempt
     }

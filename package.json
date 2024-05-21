@@ -37,7 +37,6 @@
     "react-is": "^18.3.1",
     "react-native": "0.74.1",
     "react-native-animated-nav-tab-bar": "^3.1.10",
-    "react-native-carousel-pager": "^1.5.0",
     "react-native-fast-image": "^8.6.3",
     "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "~2.16.1",

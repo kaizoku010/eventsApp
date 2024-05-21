@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { View, Text, StyleSheet, Image, Dimensions, ImageBackground } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, ImageBackground, style } from 'react-native';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';

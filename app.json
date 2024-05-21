@@ -14,17 +14,31 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "assets": [
+      "./assets/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "yes"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#ffffff",
+        "useNextNotificationsApi": true 
+      },
+      "package": "com.kaizoku256.scusers"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "2d8f5fec-4a02-44af-ae65-c409775fec9d"
+      }
+    },
+    "plugins": [
+      "expo-video"
+    ]
   }
 }
